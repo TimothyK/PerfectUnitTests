@@ -68,5 +68,22 @@ namespace PerfectUnitTests.OrderServiceTests
             //Assert
             GetPostedInvoices().ShouldNotBeEmpty();
         }
+        
+        [Fact]
+        public void IdIsCopied()
+        {
+            //Arrange
+            var id = Guid.NewGuid();
+            var order = CreateTypicalOrder();
+            order.Id = id;
+            
+            //Act
+            PostOrder(order);
+            
+            //Assert
+            GetPostedInvoices().ShouldContain(x => x.Id == id);
+        }
+        
+        
     }
 }
