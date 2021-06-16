@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using OrderServices.Models.Database;
+using OrderServices.Models.Database.Enums;
 using OrderServices.Models.FinancialSystem;
 using OrderServices.Services;
 using PerfectUnitTests.OrderServiceTests.TestDoubles;
@@ -30,8 +31,11 @@ namespace PerfectUnitTests.OrderServiceTests
         {
             return new Order
             {
-                Id = Guid.NewGuid()
+                Id = Guid.NewGuid(),
+                Status = Status.Shipped,
             };
+            //Add any other requirements for Order creation here.  
+            //Do orders require a Customer record? Order Line Items? Products?...
         }
 
         #endregion
@@ -40,6 +44,10 @@ namespace PerfectUnitTests.OrderServiceTests
 
         private void PostOrder(Order order)
         {
+            //This may close out the Arrange section of the test by doing any necessary steps,
+            //like writing or committing to a database.
+            
+            //Act
             OrderService.PostOrder(order);
         }
 
@@ -83,7 +91,20 @@ namespace PerfectUnitTests.OrderServiceTests
             //Assert
             GetPostedInvoices().ShouldContain(x => x.Id == id);
         }
-        
-        
+
+        [Fact]
+        public void Void_NotPosted()
+        {
+            //Arrange
+            var order = CreateTypicalOrder();
+            order.Status = Status.Void;
+
+            //Act
+            PostOrder(order);
+
+            //Assert
+            GetPostedInvoices().ShouldBeEmpty();
+        }
+
     }
 }

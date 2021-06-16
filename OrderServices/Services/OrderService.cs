@@ -1,4 +1,5 @@
 ﻿using OrderServices.Models.Database;
+using OrderServices.Models.Database.Enums;
 using OrderServices.Models.FinancialSystem;
 using OrderServices.Services.Abstractions;
 
@@ -15,6 +16,11 @@ namespace OrderServices.Services
         
         public void PostOrder(Order order)
         {
+            if (order.Status == Status.Void)
+            {
+                return;
+            }
+            
             var invoice = MapToInvoice(order);
             FinancialSystem.SubmitInvoice(invoice);
         }
